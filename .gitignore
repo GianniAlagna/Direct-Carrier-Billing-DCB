@@ -1,0 +1,6 @@
+src/server/config.php
+src/door-terminal/venue_config.php
+src/door-terminal/status.txt
+.DS_Store
+build/
+*.xcodeproj/xcuserdata/

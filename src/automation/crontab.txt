@@ -1,0 +1,20 @@
+# QTPass - automation schedule (Vixie cron, Debian 4.0 / Mac OS X 10.5)
+# m   h    dom mon dow  command
+
+# ---- Venue node (Mac mini, user qtvenue) --------------------------------
+# Sync with central every minute: push journal, pull cache
+*     *    *   *   *    /usr/bin/php /opt/qtpass/automation/sync_venue.php >> /var/log/qtpass/sync.log 2>&1
+
+# ---- Central server (user qtpass) ---------------------------------------
+# Night settlement after closing (Thu-Sun nights)
+30    5    *   *   0,1,5,6  /usr/bin/php /opt/qtpass/automation/night_settlement.php >> /var/log/qtpass/settlement.log 2>&1
+
+# Database backup after settlement, every day
+45    5    *   *   *    /opt/qtpass/automation/backup.sh >> /var/log/qtpass/backup.log 2>&1
+
+# Weekly SMS reconciliation against aggregator CSV (Monday 10:00)
+0     10   *   *   1    /usr/bin/php /opt/qtpass/automation/reconcile_sms.php >> /var/log/qtpass/reconcile.log 2>&1
+
+# Expire unverified registrations (PENDING_ID older than 30 days), daily 04:00
+0     4    *   *   *    /usr/bin/mysql --defaults-file=/etc/qtpass/my.cnf qtpass -e "UPDATE member SET status='EXPIRED' WHERE status IN ('NEW','PENDING_ID') AND created_at < DATE_SUB(NOW(), INTERVAL 30 DAY)"
+
