@@ -57,6 +57,7 @@ for the promoter.
 | [`src/door-terminal/`](src/door-terminal/) | Door/bar terminal UI for staff (runs on a MacBook / Mac mini at the door) |
 | [`src/automation/`](src/automation/) | Cron jobs: night settlement, SMS reconciliation, offline cache, backups |
 | [`tests/`](tests/) | HOTP check against the RFC 4226 test vectors |
+| [`website/pws_import_qtpass.sql`](website/pws_import_qtpass.sql) | SQL import of this project for giannialagna.me (`ga_project`, prefix `pws_`, EN/DE/IT/FR/ES/LA) |
 
 ---
 
