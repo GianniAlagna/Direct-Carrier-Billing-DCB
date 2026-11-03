@@ -110,9 +110,10 @@ iPhone app                 Server                          Guest's phone (SMS)
 
 | Step | Action |
 |---|---|
-| 3.6 | Guest sends `TOP 10` to the premium short number for CHF 10 (one short number per price point, set up with the aggregator) |
+| 3.6 | Guest sends `TOP` to the premium short number of the chosen price point (9391 = CHF 10, 9392 = CHF 20; example numbers set up with the aggregator) |
+| 3.6a | **CHF 20 only:** S3 replies free of charge "Reply YES to confirm CHF 20.-"; guest answers `YES` within 15 min. Required because fixed fees above CHF 10 need express confirmation (PBV Art. 11a Abs. 4) |
 | 3.7 | Aggregator forwards MO to `sms/inbound.php` |
-| 3.8 | S3 sends billed MT ("CHF 10 credit") through aggregator |
+| 3.8 | S3 sends billed MT ("CHF 10 credit") through aggregator; guests who blocked paid short numbers (FDV Art. 40 Abs. 2) receive no billing and are pointed to card/cash |
 | 3.9 | Only after **successful delivery report (DLR)** = carrier billed → book `TOPUP_SMS` with net credit |
 | 3.10 | Failed DLR → no credit, info SMS |
 
@@ -192,7 +193,8 @@ Wristband + `inside` flag. Exit is not scanned in phase 1 (re-entry by wristband
 |---|---|
 | 6.1 | Bar staff types order on terminal (pre-configured buttons: Beer, Longdrink, Water, Shot) |
 | 6.2 | Guest shows new code (app) or says member no. + receives SMS code (slow; discouraged at the bar) |
-| 6.3 | S4 verifies, shows photo + **age flag** (spirits only 18+) |
+| 6.3 | S4 verifies, shows photo + **age flag** (spirits only 18+, AlkG Art. 41 Abs. 1 lit. i; other alcohol 16+, LGV Art. 11) |
+| 6.3a | Spirits are debited from paid credit only, never from `BONUS` credit (no incentives for spirits, AlkG Art. 41 Abs. 1 lit. h) |
 | 6.4 | Debit, green screen, drink served |
 
 **Bar speed option ("tab"):** at check-in the guest may enable a
