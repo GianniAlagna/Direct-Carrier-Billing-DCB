@@ -37,7 +37,7 @@ not a profit channel. Policy options:
 |---|---|---|
 | A — "Risk-minimising" | SMS top-up credited at **80 %** (CHF 10 → CHF 8), disclosed | Honest cost pass-through; lower adoption |
 | B — "Growth" | SMS credited at 100 %, capped at CHF 20/night | Club absorbs cost as marketing; encourages first use |
-| C — "Hybrid" (recommended) | First SMS top-up 100 %, later ones 80 %; card top-ups +10 % bonus | Steers guests to cheap channel after onboarding |
+| C — "Hybrid" (recommended) | First SMS top-up 100 %, later ones 80 %; card top-ups +10 % bonus (bonus not usable for spirits, see chapter 06 §7) | Steers guests to cheap channel after onboarding |
 
 ## 4. Cost model (season 1, one club)
 

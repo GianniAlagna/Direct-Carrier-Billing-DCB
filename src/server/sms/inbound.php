@@ -7,7 +7,8 @@
  *   JOIN <first> <last> <dd.mm.yyyy>   register
  *   PIN <5 digits>                      verify number
  *   IN <member_no>                      get a door/bar code (15 min)
- *   TOP <amount>  (on premium number)   top-up, credited after billed DLR
+ *   TOP           (on premium number)   top-up, credited after billed DLR
+ *   YES           (on premium number)   confirms a top-up > CHF 10 (PBV Art. 11a Abs. 4)
  *   BAL                                 balance
  *   STOP <member_no>                    block account (free)
  *   HELP                                info (free)
@@ -112,8 +113,16 @@ case 'IN':
     break;
 
 case 'TOP':
+case 'YES':
+case 'JA':
+case 'OUI':
+case 'SI':
     // Arrives on a premium short number. Do NOT credit here: credit only on
-    // billed DLR (sms/dlr.php). Send the billed MT that carries the tariff.
+    // billed DLR (sms/dlr.php). The billed MT carries the tariff.
+    //
+    // PBV Art. 11a Abs. 4 (2007): fixed fees above CHF 10 may only be charged
+    // after the consumer has expressly confirmed. CHF 20 (9392) therefore
+    // needs a second SMS: TOP -> free confirmation request -> YES -> billing.
     if (!$m || $m['status'] != 'ACTIVE') {
         $sms->send($from, 'QT: Top-up only for active members. Nothing was charged.', 0, QT_SHORTNO_FREE);
         break;
@@ -122,8 +131,28 @@ case 'TOP':
     if (!isset($tariffs[$p['to']])) {
         break;
     }
-    $sms->send($from, 'QT: CHF ' . ($tariffs[$p['to']] / 100) . '.- top-up in progress for member '
-        . $m['member_no'] . '.', $tariffs[$p['to']], $p['to']);
+    $tariff = $tariffs[$p['to']];
+    $needsConfirmation = $tariff > 1000;
+
+    if ($needsConfirmation && $kw == 'TOP') {
+        $sms->send($from, 'QT: Top-up CHF ' . ($tariff / 100) . '.- charged to your phone bill. To confirm reply YES to '
+            . $p['to'] . ' within 15 min. Otherwise nothing is charged.', 0, $p['to']);
+        break;
+    }
+    if ($kw != 'TOP') {
+        // Confirmation is valid only after a TOP on the same number in the last 15 min
+        $req = qt_row('SELECT id FROM sms_message WHERE direction = "MO" AND msisdn = ? AND short_no = ?
+                       AND text LIKE "TOP%" AND created_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)
+                       ORDER BY id DESC LIMIT 1', array($from, $p['to']));
+        if (!$needsConfirmation || !$req) {
+            $sms->send($from, 'QT: No open top-up. Send TOP to ' . $p['to'] . ' first. Nothing was charged.',
+                0, QT_SHORTNO_FREE);
+            break;
+        }
+    }
+
+    $sms->send($from, 'QT: CHF ' . ($tariff / 100) . '.- top-up in progress for member '
+        . $m['member_no'] . '.', $tariff, $p['to']);
     qt_db()->prepare('UPDATE sms_message SET member_no = ? WHERE direction = "MO" AND msgid = ?')
            ->execute(array($m['member_no'], $p['msgid']));
     break;
